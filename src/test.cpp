@@ -10,7 +10,7 @@
 #include <ctime>
 #include <thread>
 #include <chrono>
-#include "thread_pool.hpp"
+#include <thread_pool.hpp>
 
 using std::cin;
 using std::cout;
@@ -24,6 +24,7 @@ int main() {
     unsigned long task_num;
     int32_t task_id;
 
+    cout << "How many task do you want to run? ";
     cin >> task_num;
 
     if (task_num <= 0)
