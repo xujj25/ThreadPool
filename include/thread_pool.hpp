@@ -11,7 +11,7 @@
 
 namespace xjj {
     /*!
-     * 线程池类
+     * @brief 线程池类 \class
      * 主要流程：
      * 1. 构造线程池
      * 2. 使用start启动线程池
@@ -21,135 +21,160 @@ namespace xjj {
     class ThreadPool {
     private:
         /*!
-         * 任务类
+         * @brief 任务类 \struct
          */
         struct Task {
-            std::function<void()> m_function;  // 任务可执行对象
-            int32_t m_task_id;  // 任务id
+            /// 任务可执行对象
+            std::function<void()> m_function;
+
+            /// 任务id
+            int32_t m_task_id;
 
             /*!
-             * 构造函数
-             * @param function 任务可执行对象
-             * @param task_id 任务id
+             * @brief 任务类构造函数
+             * @param [in] function 任务可执行对象，默认为nullptr
+             * @param [in] task_id 任务id，默认为-1
              */
-            explicit Task(std::function<void()> function = 0, int32_t task_id = -1);
+            explicit Task(std::function<void()> function = nullptr, int32_t task_id = -1);
         };
     public:
-
         /*!
-         * 线程数目数据类型
-         */
-        typedef size_t thread_num_type;
-
-        /*!
-         * 构造函数
-         * @param thread_num 指定线程池中线程数
-         * @param wait_finish 线程池终止时是否选择完成等待队列中所有任务再终止
-         */
-        explicit ThreadPool(thread_num_type thread_num = 5, bool wait_finish = false);
-
-        /*!
-         * 析构函数：调用terminate终止线程池
-         */
-        ~ThreadPool();
-
-        /*!
-         * 启动线程池
-         */
-        void start();
-
-        /*!
-         * 往线程池添加任务
-         * @param function 任务可执行对象
-         * @param task_id 任务id
-         * @return 添加成功与否
-         */
-        bool addTask(std::function<void()> function, int32_t task_id);
-
-        /*!
-         * 获取一个已经完成的任务的id
-         * @return 获取到的id（已完成任务队列为空时返回-1）
-         */
-        int32_t getFinishedTaskId();
-
-        /*!
-         * 终止线程池
-         */
-        void terminate();
-
-        /*!
-         * 内部线程类
+         * @brief 内部线程类 \class
          */
         class Thread {
         public:
             /*!
-             * 构造函数
-             * @param waiting_queue_ptr 等待队列指针
-             * @param working_queue_ptr 工作队列指针
-             * @param finished_queue_ptr 任务完成队列指针
-             * @param wait_finish 线程池发出终止指令时，是否选择继续执行等待队列中的任务
+             * @brief 构造函数
+             * @param [in,out] waiting_queue_ptr 等待队列指针
+             * @param [in,out] working_queue_ptr 工作队列指针
+             * @param [in,out] finished_queue_ptr 任务完成队列指针
+             * @param [in] wait_finish 线程池发出终止指令时，是否选择继续执行等待队列中的任务，默认为true
              */
             Thread(BlockingQueue<Task> *waiting_queue_ptr,
                    BlockingQueue<int> *working_queue_ptr,
                    BlockingQueue<int32_t> *finished_queue_ptr,
-                   bool wait_finish = false);
+                   bool wait_finish = true);
 
+            /*!
+             * @brief 析构函数
+             */
             ~Thread();
 
             /*!
-             * 执行线程工作
+             * @brief 执行线程工作
              */
             void run();
 
             /*!
-             * 启动线程
+             * @brief 启动线程
              * @return 创建线程是否成功
              */
             bool start();
 
             /*!
-             * 终止线程
+             * @brief 终止线程
+             * @param [in] wait_finish 线程池发出终止指令时，是否选择继续执行等待队列中的任务
              */
-            void terminate();
+            void terminate(bool wait_finish);
 
             /*!
-             * 将线程置于分离状态，等待指定线程终止
+             * @brief 将线程置于分离状态，等待指定线程终止
              * @return 操作是否成功
              */
             bool join();
 
             /*!
-             * 线程退出
+             * @brief 线程退出
              */
             void exit();
 
         private:
-            pthread_t m_thread_id;  // 线程id
+            /// 线程id
+            pthread_t m_thread_id;
 
-            bool m_running;  // 线程是否处于运行状态
+            /// 线程是否处于运行状态
+            bool m_running;
 
-            bool m_wait_finish;  // 线程池发出终止指令时，是否选择继续执行等待队列中的任务
+            /// 线程池发出终止指令时，是否选择继续执行等待队列中的任务
+            bool m_wait_finish;
 
-            BlockingQueue<Task> *m_waiting_queue_ptr;  // 等待队列指针
-            BlockingQueue<int> *m_working_queue_ptr;  // 工作队列指针
-            BlockingQueue<int32_t > *m_finished_queue_ptr;  // 任务完成队列指针
+            /// 等待队列指针
+            BlockingQueue<Task> *m_waiting_queue_ptr;
+
+            /// 工作队列指针
+            BlockingQueue<int> *m_working_queue_ptr;
+
+            /// 任务完成队列指针
+            BlockingQueue<int32_t > *m_finished_queue_ptr;
         };
+
+        /*!
+         * @brief 线程数目数据类型
+         */
+        typedef size_t thread_num_type;
+
+        /*!
+         * @brief 线程池类构造函数
+         * @param [in] thread_num 指定线程总数
+         * @param [in] overload 是否允许过载，即等待任务数与工作任务数超过线程总数
+         */
+        explicit ThreadPool(thread_num_type thread_num = 5, bool overload = true);
+
+        /*!
+         * @brief 析构函数：调用terminate终止线程池
+         */
+        ~ThreadPool();
+
+        /*!
+         * @brief 启动线程池
+         */
+        void start();
+
+        /*!
+         * @brief 往线程池添加任务
+         * @param [in] function 任务可执行对象
+         * @param [in] task_id 任务id
+         * @return 添加成功与否
+         */
+        bool addTask(std::function<void()> function, int32_t task_id);
+
+        /*!
+         * @brief 获取一个已经完成的任务的id
+         * @return 获取到的id（已完成任务队列为空时返回-1）
+         */
+        int32_t getFinishedTaskId();
+
+        /*!
+         * @brief 终止线程池
+         * @param [in] wait_finish 线程池发出终止指令时，是否选择继续执行等待队列中的任务，默认为true
+         */
+        void terminate(bool wait_finish = true);
 
     private:
 
-        bool m_running;  // 线程池是否处于运行状态
+        /// 线程池是否处于运行状态
+        bool m_running;
 
-        bool m_wait_finish;  // 线程池发出终止指令时，是否选择继续执行等待队列中的任务
+        /// 是否允许过载，即等待任务数与工作任务数超过线程总数
+        bool m_overload;
 
-        thread_num_type m_thread_num;  // 线程数目
+        /// 线程数目
+        thread_num_type m_thread_num;
 
-        std::vector<std::shared_ptr<Thread>> m_thread_ptr_set;  // 线程指针数组
+        /// 线程指针数组
+        std::vector<std::shared_ptr<Thread>> m_thread_ptr_set;
 
-        BlockingQueue<Task> m_waiting_queue;  // 任务等待队列：存放任务
-        BlockingQueue<int> m_working_queue;  // 工作队列：只需记录工作中的任务的数目
-        BlockingQueue<int32_t> m_finished_queue;  // 任务完成队列：存放已经完成的任务id
+        /// 任务等待队列：存放任务
+        BlockingQueue<Task> m_waiting_queue;
 
-        static const thread_num_type MaxThreadNum;  // 线程池最大线程数目
+        /// 工作队列：只需记录工作中的任务的数目
+        BlockingQueue<int> m_working_queue;
+
+        /// 任务完成队列：存放已经完成的任务id
+        BlockingQueue<int32_t> m_finished_queue;
+
+        /// 线程池最大线程数目
+        static const thread_num_type MaxThreadNum;
     };
 } // namespace xjj
 
