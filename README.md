@@ -32,7 +32,7 @@
 
     # 以下为可选项：
     # 编译样例：
-    bash compile_test
+    bash compile_test.sh
 
     # 运行样例：
     ./bin/test
