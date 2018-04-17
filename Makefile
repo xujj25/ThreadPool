@@ -11,4 +11,4 @@ build/thread_pool.o: include/thread_pool.hpp include/blocking_queue.hpp src/thre
 	$(CC) -I ./include -c src/thread_pool.cpp -o $@
 
 clean:
-	@rm -rf build/*.o bin/*
+	@rm -rf build/*.o lib/libthreadpool.a
