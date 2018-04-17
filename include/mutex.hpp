@@ -21,6 +21,17 @@ namespace xjj {
         Mutex();
 
         /*!
+         * @brief 拷贝构造函数，设为delete，阻止拷贝
+         */
+        Mutex(const Mutex&) = delete;
+
+        /*!
+         * @brief 赋值操作，设为delete，阻止赋值
+         * @return Mutex& 
+         */
+        Mutex& operator=(const Mutex&) = delete;
+
+        /*!
          * @brief 析构函数
          */
         ~Mutex();
