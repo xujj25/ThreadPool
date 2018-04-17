@@ -75,6 +75,17 @@ namespace xjj {
         explicit AutoLockMutex(Mutex* mutex_ptr);
 
         /*!
+         * @brief 拷贝构造函数，设为delete，阻止拷贝
+         */
+        AutoLockMutex(const AutoLockMutex&) = delete;
+
+        /*!
+         * @brief 赋值操作，设为delete，阻止赋值
+         * @return AutoLockMutex& 
+         */
+        AutoLockMutex& operator=(const AutoLockMutex&) = delete;
+
+        /*!
          * @brief 析构函数
          */
         ~AutoLockMutex();
