@@ -6,7 +6,7 @@
 
     1. 线程池类`ThreadPool`，其中包含内部类线程类`Thread`
     2. 阻塞队列模板类`BlockingQueue`，是线程池的核心数据结构
-    3. 互斥量类`Mutex`和自动加锁互斥量类`AutoLockMutex`（针对 `Mutex` 的RAII操作）
+    3. 互斥量类`Mutex`和自动加解锁互斥量类`AutoLockMutex`（针对 `Mutex` 的RAII操作）
     4. 条件变量类`ConditionVariable`
 
 - 运行流程为：
