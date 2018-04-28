@@ -1,4 +1,4 @@
-CC:= g++ -std=c++11 -g
+CC:= g++ -std=c++11 -g -Wall
 AR:= ar -crv
 
 lib/libthreadpool.a: build/condition_variable.o build/mutex.o build/thread_pool.o
@@ -11,4 +11,4 @@ build/thread_pool.o: include/thread_pool.hpp include/blocking_queue.hpp src/thre
 	$(CC) -I ./include -c src/thread_pool.cpp -o $@
 
 clean:
-	@rm -rf build/*.o lib/libthreadpool.a
+	@rm -rf build/* lib/*
